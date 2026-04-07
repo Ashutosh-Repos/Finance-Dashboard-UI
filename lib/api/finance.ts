@@ -14,13 +14,6 @@ interface ApiResponse<T = void> {
 
 // ─── Mock API Functions ───────────────────────────────────────────────────────
 
-export async function fetchTransactions(
-  transactions: Transaction[]
-): Promise<ApiResponse<Transaction[]>> {
-  await delay(400)
-  return { success: true, data: transactions }
-}
-
 export async function createTransaction(
   tx: Omit<Transaction, "id">
 ): Promise<ApiResponse<Transaction>> {

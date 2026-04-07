@@ -41,10 +41,7 @@ export const useFinanceStore = create<FinanceStore>()(
 
       addTransaction: (tx) =>
         set((state) => ({
-          transactions: [
-            { ...tx, id: crypto.randomUUID() },
-            ...state.transactions,
-          ],
+          transactions: [tx, ...state.transactions],
         })),
 
       editTransaction: (id, updates) =>

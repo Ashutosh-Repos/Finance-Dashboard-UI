@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react"
 import type { Transaction } from "@/lib/types"
-import { CATEGORIES } from "@/lib/constants"
+import { CATEGORY_MAP } from "@/lib/constants"
 
 function getDownloadFilename(format: "csv" | "json"): string {
   const date = new Date().toISOString().slice(0, 10)
@@ -12,7 +12,7 @@ function getDownloadFilename(format: "csv" | "json"): string {
 function generateCSV(transactions: Transaction[]): string {
   const headers = ["Date", "Description", "Amount", "Type", "Category"]
   const rows = transactions.map((tx) => {
-    const cat = CATEGORIES.find((c) => c.id === tx.category)
+    const cat = CATEGORY_MAP[tx.category]
     return [
       tx.date,
       `"${tx.description.replace(/"/g, '""')}"`, // Escape quotes
@@ -28,7 +28,7 @@ function generateCSV(transactions: Transaction[]): string {
 
 function generateJSON(transactions: Transaction[]): string {
   const enriched = transactions.map((tx) => {
-    const cat = CATEGORIES.find((c) => c.id === tx.category)
+    const cat = CATEGORY_MAP[tx.category]
     return {
       ...tx,
       categoryLabel: cat?.label ?? tx.category,

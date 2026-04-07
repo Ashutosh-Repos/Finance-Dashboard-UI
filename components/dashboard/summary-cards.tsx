@@ -15,7 +15,7 @@ import { useTransactionTotals } from "@/hooks/use-transaction-totals"
 import { useAnimatedNumber } from "@/hooks/use-animated-number"
 import { formatCurrency } from "@/lib/constants"
 import { computeSummaryMoM } from "@/lib/aggregates"
-import { staggerContainer, fadeInUp, cardHover } from "@/lib/motion"
+import { staggerContainer, fadeInUp, cardHover, cardTap, iconHover } from "@/lib/motion"
 
 function AnimatedCurrencyValue({ value }: { value: number }) {
   const display = useAnimatedNumber({
@@ -48,13 +48,20 @@ function StatCard({ title, icon: Icon, value, change, isCurrency = true }: StatC
     <motion.div
       variants={fadeInUp}
       whileHover={prefersReducedMotion ? undefined : cardHover}
+      whileTap={prefersReducedMotion ? undefined : cardTap}
+      className="card-hover-effect"
     >
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             {title}
           </CardTitle>
-          <Icon className="size-4 text-muted-foreground" />
+          <motion.div
+            initial={{ rotate: 0 }}
+            whileHover={iconHover}
+          >
+            <Icon className="size-4 text-muted-foreground" />
+          </motion.div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
@@ -85,14 +92,14 @@ export function SummaryCards() {
     ? ((totalIncome - totalExpenses) / totalIncome) * 100
     : 0
 
-  // Real month-over-month changes computed from actual data
   const mom = useMemo(() => computeSummaryMoM(transactions), [transactions])
 
   if (!isHydrated) {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i}>
+          <Card key={i} className="overflow-hidden">
+            <div className="animate-shimmer absolute inset-0" />
             <CardHeader className="pb-2">
               <Skeleton className="h-4 w-24" />
             </CardHeader>

@@ -138,3 +138,70 @@
     font-family: var(--font-jetbrains), "JetBrains Mono", monospace;
   }
 }
+
+/* ─── Keyframe Animations ──────────────────────────────────────────────────── */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.08); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+
+/* ─── Utility Classes ──────────────────────────────────────────────────────── */
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(1 0 0 / 8%) 40%,
+    oklch(1 0 0 / 12%) 50%,
+    oklch(1 0 0 / 8%) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+.dark .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(1 0 0 / 4%) 40%,
+    oklch(1 0 0 / 6%) 50%,
+    oklch(1 0 0 / 4%) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+/* Smooth card hover transition */
+.card-hover-effect {
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.card-hover-effect:hover {
+  box-shadow: 0 8px 30px oklch(0 0 0 / 8%);
+}
+
+.dark .card-hover-effect:hover {
+  box-shadow: 0 8px 30px oklch(0 0 0 / 30%);
+}

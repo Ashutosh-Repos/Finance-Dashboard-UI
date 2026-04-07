@@ -40,7 +40,7 @@ export interface FinanceStore {
   setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void
   resetFilters: () => void
   setSort: (field: SortField) => void
-  addTransaction: (tx: Omit<Transaction, "id">) => void
+  addTransaction: (tx: Transaction) => void
   editTransaction: (id: string, updates: Partial<Omit<Transaction, "id">>) => void
   deleteTransaction: (id: string) => void
   resetToSeedData: () => void
@@ -53,12 +53,4 @@ export interface TransactionDialogProps {
   transaction?: Transaction
   open: boolean
   onOpenChange: (open: boolean) => void
-}
-
-export interface TransactionFiltersProps {
-  activeFilterCount: number
-}
-
-export interface ExportButtonProps {
-  transactions: Transaction[]
 }

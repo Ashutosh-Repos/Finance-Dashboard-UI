@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, type ChartConfig } from "@/components/ui/chart"
 import { useFinanceStore } from "@/lib/store"
 import { Skeleton } from "@/components/ui/skeleton"
-import { fadeIn } from "@/lib/motion"
+import { fadeInScale, chartAnimationProps } from "@/lib/motion"
 import { getActiveMonths, computeMonthlyBreakdown } from "@/lib/aggregates"
 
 const chartConfig = {
@@ -40,8 +40,8 @@ export function MonthlyComparisonChart() {
   }
 
   return (
-    <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-      <Card>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
+      <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Monthly Income vs Expenses</CardTitle>
           <CardDescription>Grouped comparison over {monthCount} months</CardDescription>
@@ -49,13 +49,24 @@ export function MonthlyComparisonChart() {
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[300px] w-full">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <CartesianGrid vertical={false} strokeDasharray="3 3" strokeOpacity={0.3} />
               <XAxis dataKey="month" tickLine={false} axisLine={false} />
               <YAxis tickLine={false} axisLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
-              <Bar dataKey="income" fill="var(--color-chart-2)" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="expenses" fill="var(--color-chart-4)" radius={[4, 4, 0, 0]} />
+              <Bar
+                dataKey="income"
+                fill="var(--color-chart-2)"
+                radius={[6, 6, 0, 0]}
+                {...chartAnimationProps}
+              />
+              <Bar
+                dataKey="expenses"
+                fill="var(--color-chart-4)"
+                radius={[6, 6, 0, 0]}
+                {...chartAnimationProps}
+                animationBegin={400}
+              />
             </BarChart>
           </ChartContainer>
         </CardContent>

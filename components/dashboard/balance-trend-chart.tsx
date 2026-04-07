@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart"
 import { useFinanceStore } from "@/lib/store"
 import { Skeleton } from "@/components/ui/skeleton"
-import { fadeIn } from "@/lib/motion"
+import { fadeInScale, chartAnimationProps } from "@/lib/motion"
 import { getActiveMonths, computeMonthlyBreakdown, monthKeyToLabel } from "@/lib/aggregates"
 
 const chartConfig = {
@@ -49,8 +49,8 @@ export function BalanceTrendChart() {
   }
 
   return (
-    <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-      <Card>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
+      <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Balance Trend</CardTitle>
           <CardDescription>{dateLabel}</CardDescription>
@@ -60,11 +60,12 @@ export function BalanceTrendChart() {
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-chart-1)" stopOpacity={0.3} />
+                  <stop offset="5%" stopColor="var(--color-chart-1)" stopOpacity={0.35} />
+                  <stop offset="50%" stopColor="var(--color-chart-1)" stopOpacity={0.1} />
                   <stop offset="95%" stopColor="var(--color-chart-1)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <CartesianGrid vertical={false} strokeDasharray="3 3" strokeOpacity={0.3} />
               <XAxis dataKey="month" tickLine={false} axisLine={false} />
               <YAxis tickLine={false} axisLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
               <ChartTooltip content={<ChartTooltipContent />} />
@@ -73,7 +74,10 @@ export function BalanceTrendChart() {
                 dataKey="balance"
                 stroke="var(--color-chart-1)"
                 fill="url(#balanceGradient)"
-                strokeWidth={2}
+                strokeWidth={2.5}
+                dot={{ r: 3, fill: "var(--color-chart-1)", strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: "var(--color-chart-1)", stroke: "var(--background)", strokeWidth: 2 }}
+                {...chartAnimationProps}
               />
             </AreaChart>
           </ChartContainer>

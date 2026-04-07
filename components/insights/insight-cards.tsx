@@ -7,9 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useFinanceStore } from "@/lib/store"
 import { useAnimatedNumber } from "@/hooks/use-animated-number"
-import { CATEGORY_MAP, formatCurrency } from "@/lib/constants"
+import { formatCurrency } from "@/lib/constants"
 import { computeMoMChange, computeCategoryBreakdown, computeDaySpan, getActiveMonths, monthKeyToLabel } from "@/lib/aggregates"
-import { staggerContainer, fadeInUp, cardHover } from "@/lib/motion"
+import { staggerContainer, fadeInUp, cardHover, cardTap, iconHover } from "@/lib/motion"
 
 function AnimatedCurrency({ value }: { value: number }) {
   const display = useAnimatedNumber({
@@ -28,19 +28,15 @@ export function InsightCards() {
     const expenses = transactions.filter((t) => t.type === "expense")
     const totalExpenses = expenses.reduce((s, t) => s + t.amount, 0)
 
-    // Highest spending category
     const categories = computeCategoryBreakdown(transactions)
     const highest = categories[0] ?? { id: "", label: "N/A", amount: 0 }
     const highestCatPercent = totalExpenses > 0 ? (highest.amount / totalExpenses) * 100 : 0
 
-    // Real month-over-month change (last two months with data)
     const mom = computeMoMChange(transactions)
 
-    // Latest month label
     const activeMonths = getActiveMonths(transactions, 2)
     const latestMonthLabel = activeMonths.length > 0 ? monthKeyToLabel(activeMonths[activeMonths.length - 1]) : "—"
 
-    // Average daily expenditure from actual date span
     const daySpan = computeDaySpan(transactions)
     const avgDaily = totalExpenses / daySpan
 
@@ -60,7 +56,8 @@ export function InsightCards() {
     return (
       <div className="grid gap-4 sm:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i}>
+          <Card key={i} className="overflow-hidden">
+            <div className="animate-shimmer absolute inset-0" />
             <CardHeader className="pb-2">
               <Skeleton className="h-4 w-36" />
             </CardHeader>
@@ -81,13 +78,20 @@ export function InsightCards() {
       initial="hidden"
       animate="visible"
     >
-      <motion.div variants={fadeInUp} whileHover={prefersReducedMotion ? undefined : cardHover}>
-        <Card>
+      <motion.div
+        variants={fadeInUp}
+        whileHover={prefersReducedMotion ? undefined : cardHover}
+        whileTap={prefersReducedMotion ? undefined : cardTap}
+        className="card-hover-effect"
+      >
+        <Card className="overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Highest Category
             </CardTitle>
-            <TrendingUpIcon className="size-4 text-muted-foreground" />
+            <motion.div whileHover={iconHover}>
+              <TrendingUpIcon className="size-4 text-muted-foreground" />
+            </motion.div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{insights.highestCatLabel}</div>
@@ -99,17 +103,24 @@ export function InsightCards() {
         </Card>
       </motion.div>
 
-      <motion.div variants={fadeInUp} whileHover={prefersReducedMotion ? undefined : cardHover}>
-        <Card>
+      <motion.div
+        variants={fadeInUp}
+        whileHover={prefersReducedMotion ? undefined : cardHover}
+        whileTap={prefersReducedMotion ? undefined : cardTap}
+        className="card-hover-effect"
+      >
+        <Card className="overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Month-over-Month
             </CardTitle>
-            {insights.momChange <= 0 ? (
-              <TrendingDownIcon className="size-4 text-success" />
-            ) : (
-              <TrendingUpIcon className="size-4 text-destructive" />
-            )}
+            <motion.div whileHover={iconHover}>
+              {insights.momChange <= 0 ? (
+                <TrendingDownIcon className="size-4 text-success" />
+              ) : (
+                <TrendingUpIcon className="size-4 text-destructive" />
+              )}
+            </motion.div>
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${insights.momChange <= 0 ? "text-success" : "text-destructive"}`}>
@@ -122,13 +133,20 @@ export function InsightCards() {
         </Card>
       </motion.div>
 
-      <motion.div variants={fadeInUp} whileHover={prefersReducedMotion ? undefined : cardHover}>
-        <Card>
+      <motion.div
+        variants={fadeInUp}
+        whileHover={prefersReducedMotion ? undefined : cardHover}
+        whileTap={prefersReducedMotion ? undefined : cardTap}
+        className="card-hover-effect"
+      >
+        <Card className="overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Avg. Daily Spend
             </CardTitle>
-            <CalendarIcon className="size-4 text-muted-foreground" />
+            <motion.div whileHover={iconHover}>
+              <CalendarIcon className="size-4 text-muted-foreground" />
+            </motion.div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

@@ -23,6 +23,8 @@ import { cn } from "@/lib/utils"
 import { slideInRight } from "@/lib/motion"
 import type { Transaction, SortField } from "@/lib/types"
 import { TransactionDialog } from "@/components/transactions/transaction-dialog"
+import { removeTransaction } from "@/lib/api/finance"
+import { toast } from "sonner"
 
 interface TransactionTableProps {
   transactions: Transaction[]
@@ -52,6 +54,16 @@ export function TransactionTable({ transactions, filteredCount, totalCount, isEm
   const handleSort = useCallback((field: SortField) => {
     setSort(field)
   }, [setSort])
+
+  const handleDelete = useCallback(async (tx: Transaction) => {
+    const result = await removeTransaction(tx.id)
+    if (result.success) {
+      deleteTransaction(tx.id)
+      toast.success(`Deleted "${tx.description}"`)
+    } else {
+      toast.error("Failed to delete transaction")
+    }
+  }, [deleteTransaction])
 
   if (isEmpty) {
     return (
@@ -141,7 +153,7 @@ export function TransactionTable({ transactions, filteredCount, totalCount, isEm
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => deleteTransaction(tx.id)}>
+                                    <AlertDialogAction onClick={() => handleDelete(tx)}>
                                       Delete
                                     </AlertDialogAction>
                                   </AlertDialogFooter>

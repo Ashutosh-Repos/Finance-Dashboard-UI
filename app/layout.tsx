@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 
@@ -13,13 +13,100 @@ const jetbrains = JetBrains_Mono({
   variable: "--font-jetbrains",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
 })
 
+// ─── SEO: Metadata ────────────────────────────────────────────────────────────
+
 export const metadata: Metadata = {
-  title: "Zorvyn – Finance Dashboard",
+  metadataBase: new URL("https://zorvyn.finance"),
+  title: {
+    default: "Zorvyn – Finance Dashboard",
+    template: "%s | Zorvyn",
+  },
   description:
     "A clean, interactive finance dashboard to track spending, view insights, and manage transactions.",
+  keywords: [
+    "finance dashboard",
+    "expense tracker",
+    "budget management",
+    "income tracking",
+    "financial insights",
+    "personal finance",
+  ],
+  authors: [{ name: "Ashutosh Kumar" }],
+  creator: "Ashutosh Kumar",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://zorvyn.finance",
+    siteName: "Zorvyn Finance",
+    title: "Zorvyn – Finance Dashboard",
+    description:
+      "Track spending, view insights, and manage transactions with a modern finance dashboard.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Zorvyn – Finance Dashboard",
+    description:
+      "Track spending, view insights, and manage transactions with a modern finance dashboard.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 }
+
+// ─── Viewport (exported separately in Next.js 16) ─────────────────────────────
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1a1a" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+}
+
+// ─── JSON-LD Structured Data ──────────────────────────────────────────────────
+
+function JsonLd() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Zorvyn Finance Dashboard",
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Web",
+    description:
+      "A clean, interactive finance dashboard to track spending, view insights, and manage transactions.",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "INR",
+    },
+    author: {
+      "@type": "Person",
+      name: "Ashutosh Kumar",
+    },
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    />
+  )
+}
+
+// ─── Root Layout (Server Component) ───────────────────────────────────────────
 
 export default function RootLayout({
   children,
@@ -32,6 +119,10 @@ export default function RootLayout({
       className={`${jetbrains.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <JsonLd />
+        <link rel="canonical" href="https://zorvyn.finance" />
+      </head>
       <body className="min-h-full">
         <ThemeProvider
           attribute="class"

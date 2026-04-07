@@ -28,8 +28,9 @@ export function useAnimatedNumber({
   const prevValue = useRef(0)
 
   const spring = useSpring(prefersReducedMotion ? value : 0, {
-    stiffness: 75,
-    damping: 30,
+    stiffness: 50,
+    damping: 20,
+    mass: 1.2,
     duration: prefersReducedMotion ? 0 : duration,
   })
 

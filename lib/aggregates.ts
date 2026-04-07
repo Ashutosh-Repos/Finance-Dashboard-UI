@@ -119,7 +119,7 @@ export function computeSummaryMoM(transactions: Transaction[]): {
   const currIncome = transactions.filter((t) => t.type === "income" && t.date.startsWith(curr)).reduce((s, t) => s + t.amount, 0)
   const currExpense = transactions.filter((t) => t.type === "expense" && t.date.startsWith(curr)).reduce((s, t) => s + t.amount, 0)
 
-  const pct = (curr: number, prev: number) => (prev > 0 ? ((curr - prev) / prev) * 100 : 0)
+  const pct = (current: number, previous: number) => (previous > 0 ? ((current - previous) / previous) * 100 : 0)
 
   const prevSavingsRate = prevIncome > 0 ? ((prevIncome - prevExpense) / prevIncome) * 100 : 0
   const currSavingsRate = currIncome > 0 ? ((currIncome - currExpense) / currIncome) * 100 : 0

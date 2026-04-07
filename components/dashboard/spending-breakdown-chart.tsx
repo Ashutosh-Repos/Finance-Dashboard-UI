@@ -9,7 +9,7 @@ import { useFinanceStore } from "@/lib/store"
 import { CHART_COLORS, formatCurrency } from "@/lib/constants"
 import { computeCategoryBreakdown } from "@/lib/aggregates"
 import { Skeleton } from "@/components/ui/skeleton"
-import { fadeIn } from "@/lib/motion"
+import { fadeInScale, pieAnimationProps } from "@/lib/motion"
 
 export function SpendingBreakdownChart() {
   const transactions = useFinanceStore((s) => s.transactions)
@@ -17,18 +17,13 @@ export function SpendingBreakdownChart() {
 
   const { chartData, chartConfig, totalExpenses } = useMemo(() => {
     const categories = computeCategoryBreakdown(transactions).slice(0, 5)
-    let total = 0
 
-    const data = categories.map((cat, idx) => {
-      total += cat.amount
-      return {
-        name: cat.label,
-        value: cat.amount,
-        fill: CHART_COLORS[idx % CHART_COLORS.length],
-      }
-    })
+    const data = categories.map((cat, idx) => ({
+      name: cat.label,
+      value: cat.amount,
+      fill: CHART_COLORS[idx % CHART_COLORS.length],
+    }))
 
-    // Re-sum for total (all expenses, not just top 5)
     const allTotal = transactions
       .filter((t) => t.type === "expense")
       .reduce((s, t) => s + t.amount, 0)
@@ -56,8 +51,8 @@ export function SpendingBreakdownChart() {
   }
 
   return (
-    <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-      <Card>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
+      <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Spending Breakdown</CardTitle>
           <CardDescription>Top 5 expense categories</CardDescription>
@@ -73,6 +68,8 @@ export function SpendingBreakdownChart() {
                 innerRadius={70}
                 outerRadius={120}
                 strokeWidth={2}
+                paddingAngle={2}
+                {...pieAnimationProps}
               >
                 {chartData.map((entry) => (
                   <Cell key={entry.name} fill={entry.fill} />

@@ -9,7 +9,7 @@ import { useFinanceStore } from "@/lib/store"
 import { CHART_COLORS } from "@/lib/constants"
 import { computeCategoryBreakdown } from "@/lib/aggregates"
 import { Skeleton } from "@/components/ui/skeleton"
-import { fadeIn } from "@/lib/motion"
+import { fadeInScale, chartAnimationProps } from "@/lib/motion"
 
 const chartConfig = {
   amount: { label: "Amount", color: "var(--color-chart-1)" },
@@ -39,8 +39,8 @@ export function TopCategoriesChart() {
   }
 
   return (
-    <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-      <Card>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
+      <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Top Spending Categories</CardTitle>
           <CardDescription>Expenses by category, sorted by total</CardDescription>
@@ -48,11 +48,15 @@ export function TopCategoriesChart() {
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[300px] w-full">
             <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid horizontal={false} strokeDasharray="3 3" />
+              <CartesianGrid horizontal={false} strokeDasharray="3 3" strokeOpacity={0.3} />
               <XAxis type="number" tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
               <YAxis type="category" dataKey="name" width={110} tickLine={false} axisLine={false} />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="amount" radius={[0, 4, 4, 0]} />
+              <Bar
+                dataKey="amount"
+                radius={[0, 6, 6, 0]}
+                {...chartAnimationProps}
+              />
             </BarChart>
           </ChartContainer>
         </CardContent>

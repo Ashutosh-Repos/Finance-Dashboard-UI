@@ -68,11 +68,13 @@ export function TransactionDialog({ mode, transaction, open, onOpenChange }: Tra
         editTransaction(transaction.id, txData)
         toast.success("Transaction updated")
         onOpenChange(false)
+      } else {
+        toast.error("Failed to update transaction")
       }
     } else {
       const result = await createTransaction(txData)
       if (result.success && result.data) {
-        addTransaction(txData)
+        addTransaction(result.data)
         toast.success("Transaction added")
         onOpenChange(false)
       } else {
