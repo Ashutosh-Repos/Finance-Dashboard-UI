@@ -75,21 +75,31 @@ export function TransactionFilters({ activeFilterCount }: TransactionFiltersProp
           </SelectContent>
         </Select>
 
-        <Input
-          type="date"
-          value={filters.dateFrom ?? ""}
-          onChange={(e) => setFilter("dateFrom", e.target.value || null)}
-          className="w-full sm:w-40"
-          placeholder="From"
-        />
+        <div className="flex items-center gap-1 w-full sm:w-auto">
+          <label htmlFor="filter-date-from" className="text-xs text-muted-foreground shrink-0">
+            From
+          </label>
+          <Input
+            id="filter-date-from"
+            type="date"
+            value={filters.dateFrom ?? ""}
+            onChange={(e) => setFilter("dateFrom", e.target.value || null)}
+            className="w-full sm:w-40"
+          />
+        </div>
 
-        <Input
-          type="date"
-          value={filters.dateTo ?? ""}
-          onChange={(e) => setFilter("dateTo", e.target.value || null)}
-          className="w-full sm:w-40"
-          placeholder="To"
-        />
+        <div className="flex items-center gap-1 w-full sm:w-auto">
+          <label htmlFor="filter-date-to" className="text-xs text-muted-foreground shrink-0">
+            To
+          </label>
+          <Input
+            id="filter-date-to"
+            type="date"
+            value={filters.dateTo ?? ""}
+            onChange={(e) => setFilter("dateTo", e.target.value || null)}
+            className="w-full sm:w-40"
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-2">

@@ -6,7 +6,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart"
 import { useFinanceStore } from "@/lib/store"
-import { CATEGORIES } from "@/lib/constants"
+import { CHART_COLORS } from "@/lib/constants"
+import { computeCategoryBreakdown } from "@/lib/aggregates"
 import { Skeleton } from "@/components/ui/skeleton"
 import { fadeIn } from "@/lib/motion"
 
@@ -14,32 +15,18 @@ const chartConfig = {
   amount: { label: "Amount", color: "var(--color-chart-1)" },
 } satisfies ChartConfig
 
-const CHART_COLORS = [
-  "var(--color-chart-1)",
-  "var(--color-chart-2)",
-  "var(--color-chart-3)",
-  "var(--color-chart-4)",
-  "var(--color-chart-5)",
-]
-
 export function TopCategoriesChart() {
   const transactions = useFinanceStore((s) => s.transactions)
   const isHydrated = useFinanceStore((s) => s.isHydrated)
 
   const chartData = useMemo(() => {
-    const catMap = new Map<string, number>()
-    for (const tx of transactions) {
-      if (tx.type === "expense") {
-        catMap.set(tx.category, (catMap.get(tx.category) ?? 0) + tx.amount)
-      }
-    }
-    return [...catMap.entries()]
-      .sort(([, a], [, b]) => b - a)
+    return computeCategoryBreakdown(transactions)
       .slice(0, 5)
-      .map(([id, amount], idx) => {
-        const cat = CATEGORIES.find((c) => c.id === id)
-        return { name: cat?.label ?? id, amount, fill: CHART_COLORS[idx % CHART_COLORS.length] }
-      })
+      .map((cat, idx) => ({
+        name: cat.label,
+        amount: cat.amount,
+        fill: CHART_COLORS[idx % CHART_COLORS.length],
+      }))
   }, [transactions])
 
   if (!isHydrated) {

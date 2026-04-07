@@ -29,6 +29,21 @@ export const CATEGORIES = [
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"]
 
+/** O(1) lookup map — prefer over CATEGORIES.find() */
+export const CATEGORY_MAP: Record<string, CategoryDef> = Object.fromEntries(
+  CATEGORIES.map((c) => [c.id, c])
+)
+
+// ─── Chart Colors ─────────────────────────────────────────────────────────────
+
+export const CHART_COLORS = [
+  "var(--color-chart-1)",
+  "var(--color-chart-2)",
+  "var(--color-chart-3)",
+  "var(--color-chart-4)",
+  "var(--color-chart-5)",
+] as const
+
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
@@ -67,5 +82,5 @@ export const SAVINGS_GOAL_MONTHLY = 50_000
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 export function getCategoryById(id: string): CategoryDef | undefined {
-  return CATEGORIES.find((c) => c.id === id)
+  return CATEGORY_MAP[id]
 }

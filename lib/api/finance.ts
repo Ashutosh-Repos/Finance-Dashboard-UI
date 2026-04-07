@@ -22,9 +22,8 @@ export async function fetchTransactions(
 }
 
 export async function createTransaction(
-  tx: Omit<Transaction, "id">,
-  addFn: (tx: Omit<Transaction, "id">) => void
-): Promise<ApiResponse> {
+  tx: Omit<Transaction, "id">
+): Promise<ApiResponse<Transaction>> {
   await delay(300)
 
   if (!tx.description.trim()) {
@@ -34,25 +33,22 @@ export async function createTransaction(
     return { success: false, error: "Amount must be positive" }
   }
 
-  addFn(tx)
-  return { success: true }
+  // Simulate server-side ID generation
+  const created: Transaction = { ...tx, id: crypto.randomUUID() }
+  return { success: true, data: created }
 }
 
 export async function updateTransaction(
   id: string,
-  updates: Partial<Omit<Transaction, "id">>,
-  editFn: (id: string, updates: Partial<Omit<Transaction, "id">>) => void
-): Promise<ApiResponse> {
+  updates: Partial<Omit<Transaction, "id">>
+): Promise<ApiResponse<Partial<Omit<Transaction, "id">>>> {
   await delay(300)
-  editFn(id, updates)
-  return { success: true }
+  return { success: true, data: updates }
 }
 
 export async function removeTransaction(
-  id: string,
-  deleteFn: (id: string) => void
+  id: string
 ): Promise<ApiResponse> {
   await delay(200)
-  deleteFn(id)
   return { success: true }
 }

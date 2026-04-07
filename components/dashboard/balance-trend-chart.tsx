@@ -8,6 +8,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { useFinanceStore } from "@/lib/store"
 import { Skeleton } from "@/components/ui/skeleton"
 import { fadeIn } from "@/lib/motion"
+import { getActiveMonths, computeMonthlyBreakdown, monthKeyToLabel } from "@/lib/aggregates"
 
 const chartConfig = {
   balance: { label: "Balance", color: "var(--color-chart-1)" },
@@ -15,22 +16,22 @@ const chartConfig = {
   expenses: { label: "Expenses", color: "var(--color-chart-4)" },
 } satisfies ChartConfig
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
-
 export function BalanceTrendChart() {
   const transactions = useFinanceStore((s) => s.transactions)
   const isHydrated = useFinanceStore((s) => s.isHydrated)
 
-  const chartData = useMemo(() => {
-    let runningBalance = 0
-    return MONTHS.map((month, idx) => {
-      const monthStr = `2026-${String(idx + 1).padStart(2, "0")}`
-      const monthTxs = transactions.filter((tx) => tx.date.startsWith(monthStr))
-      const income = monthTxs.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0)
-      const expenses = monthTxs.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0)
-      runningBalance += income - expenses
-      return { month, income, expenses, balance: runningBalance }
-    })
+  const { chartData, dateLabel } = useMemo(() => {
+    const months = getActiveMonths(transactions, 6)
+    const breakdown = computeMonthlyBreakdown(transactions, months)
+    const data = breakdown.map((b) => ({
+      month: b.label,
+      income: b.income,
+      expenses: b.expenses,
+      balance: b.balance,
+    }))
+    const first = months[0] ? monthKeyToLabel(months[0]) : ""
+    const last = months[months.length - 1] ? monthKeyToLabel(months[months.length - 1]) : ""
+    return { chartData: data, dateLabel: `Running balance over ${first} – ${last}` }
   }, [transactions])
 
   if (!isHydrated) {
@@ -52,7 +53,7 @@ export function BalanceTrendChart() {
       <Card>
         <CardHeader>
           <CardTitle>Balance Trend</CardTitle>
-          <CardDescription>Running balance over January – June 2026</CardDescription>
+          <CardDescription>{dateLabel}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[300px] w-full">

@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { toast } from "sonner"
+import { LoaderIcon } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,18 +16,31 @@ import { createTransaction, updateTransaction } from "@/lib/api/finance"
 
 export function TransactionDialog({ mode, transaction, open, onOpenChange }: TransactionDialogProps) {
   const isEdit = mode === "edit"
-  const initial = isEdit ? transaction : null
 
   const addTransaction = useFinanceStore((s) => s.addTransaction)
   const editTransaction = useFinanceStore((s) => s.editTransaction)
 
-  const [description, setDescription] = useState(initial?.description ?? "")
-  const [amount, setAmount] = useState(initial?.amount?.toString() ?? "")
-  const [type, setType] = useState<TransactionType>(initial?.type ?? "expense")
-  const [category, setCategory] = useState(initial?.category ?? "food")
-  const [date, setDate] = useState(initial?.date ?? new Date().toISOString().slice(0, 10))
+  const [description, setDescription] = useState("")
+  const [amount, setAmount] = useState("")
+  const [type, setType] = useState<TransactionType>("expense")
+  const [category, setCategory] = useState("food")
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, boolean>>({})
+
+  // Reset form state when dialog opens or transaction changes
+  useEffect(() => {
+    if (open) {
+      const initial = isEdit ? transaction : null
+      setDescription(initial?.description ?? "")
+      setAmount(initial?.amount?.toString() ?? "")
+      setType(initial?.type ?? "expense")
+      setCategory(initial?.category ?? "food")
+      setDate(initial?.date ?? new Date().toISOString().slice(0, 10))
+      setErrors({})
+      setIsSubmitting(false)
+    }
+  }, [open, transaction, isEdit])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -48,15 +62,17 @@ export function TransactionDialog({ mode, transaction, open, onOpenChange }: Tra
       date,
     }
 
-    if (isEdit && initial) {
-      const result = await updateTransaction(initial.id, txData, editTransaction)
+    if (isEdit && transaction) {
+      const result = await updateTransaction(transaction.id, txData)
       if (result.success) {
+        editTransaction(transaction.id, txData)
         toast.success("Transaction updated")
         onOpenChange(false)
       }
     } else {
-      const result = await createTransaction(txData, addTransaction)
-      if (result.success) {
+      const result = await createTransaction(txData)
+      if (result.success && result.data) {
+        addTransaction(txData)
         toast.success("Transaction added")
         onOpenChange(false)
       } else {
@@ -89,6 +105,7 @@ export function TransactionDialog({ mode, transaction, open, onOpenChange }: Tra
                 }}
                 aria-invalid={errors.description || undefined}
                 placeholder="e.g., Monthly Rent"
+                disabled={isSubmitting}
               />
             </Field>
 
@@ -106,6 +123,7 @@ export function TransactionDialog({ mode, transaction, open, onOpenChange }: Tra
                 }}
                 aria-invalid={errors.amount || undefined}
                 placeholder="e.g., 15000"
+                disabled={isSubmitting}
               />
             </Field>
 
@@ -116,6 +134,7 @@ export function TransactionDialog({ mode, transaction, open, onOpenChange }: Tra
                 value={type}
                 onValueChange={(v) => v && setType(v as TransactionType)}
                 className="justify-start"
+                disabled={isSubmitting}
               >
                 <ToggleGroupItem value="expense">Expense</ToggleGroupItem>
                 <ToggleGroupItem value="income">Income</ToggleGroupItem>
@@ -124,7 +143,7 @@ export function TransactionDialog({ mode, transaction, open, onOpenChange }: Tra
 
             <Field>
               <FieldLabel htmlFor="tx-category">Category</FieldLabel>
-              <Select value={category} onValueChange={setCategory}>
+              <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
                 <SelectTrigger id="tx-category">
                   <SelectValue />
                 </SelectTrigger>
@@ -147,15 +166,17 @@ export function TransactionDialog({ mode, transaction, open, onOpenChange }: Tra
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                disabled={isSubmitting}
               />
             </Field>
           </FieldGroup>
 
           <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <LoaderIcon className="animate-spin" />}
               {isSubmitting ? "Saving..." : isEdit ? "Update" : "Add"}
             </Button>
           </DialogFooter>

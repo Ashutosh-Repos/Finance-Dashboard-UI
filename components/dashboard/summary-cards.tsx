@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import { motion, useReducedMotion } from "framer-motion"
 import {
   WalletIcon,
@@ -10,9 +11,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useFinanceStore } from "@/lib/store"
-import { useFilteredTransactions } from "@/hooks/use-filtered-transactions"
+import { useTransactionTotals } from "@/hooks/use-transaction-totals"
 import { useAnimatedNumber } from "@/hooks/use-animated-number"
 import { formatCurrency } from "@/lib/constants"
+import { computeSummaryMoM } from "@/lib/aggregates"
 import { staggerContainer, fadeInUp, cardHover } from "@/lib/motion"
 
 function AnimatedCurrencyValue({ value }: { value: number }) {
@@ -76,11 +78,15 @@ function StatCard({ title, icon: Icon, value, change, isCurrency = true }: StatC
 
 export function SummaryCards() {
   const isHydrated = useFinanceStore((s) => s.isHydrated)
-  const { totalIncome, totalExpenses, totalBalance } = useFilteredTransactions()
+  const transactions = useFinanceStore((s) => s.transactions)
+  const { totalIncome, totalExpenses, totalBalance } = useTransactionTotals()
 
   const savingsRate = totalIncome > 0
     ? ((totalIncome - totalExpenses) / totalIncome) * 100
     : 0
+
+  // Real month-over-month changes computed from actual data
+  const mom = useMemo(() => computeSummaryMoM(transactions), [transactions])
 
   if (!isHydrated) {
     return (
@@ -111,25 +117,25 @@ export function SummaryCards() {
         title="Total Balance"
         icon={WalletIcon}
         value={totalBalance}
-        change={8.2}
+        change={mom.balanceChange}
       />
       <StatCard
         title="Total Income"
         icon={ArrowUpIcon}
         value={totalIncome}
-        change={12.5}
+        change={mom.incomeChange}
       />
       <StatCard
         title="Total Expenses"
         icon={ArrowDownIcon}
         value={totalExpenses}
-        change={-3.1}
+        change={mom.expenseChange}
       />
       <StatCard
         title="Savings Rate"
         icon={PiggyBankIcon}
         value={savingsRate}
-        change={4.3}
+        change={mom.savingsRateChange}
         isCurrency={false}
       />
     </motion.div>

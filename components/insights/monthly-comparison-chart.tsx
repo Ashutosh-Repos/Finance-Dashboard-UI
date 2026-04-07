@@ -2,14 +2,13 @@
 
 import { useMemo } from "react"
 import { motion } from "framer-motion"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, type ChartConfig } from "@/components/ui/chart"
 import { useFinanceStore } from "@/lib/store"
 import { Skeleton } from "@/components/ui/skeleton"
 import { fadeIn } from "@/lib/motion"
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
+import { getActiveMonths, computeMonthlyBreakdown } from "@/lib/aggregates"
 
 const chartConfig = {
   income: { label: "Income", color: "var(--color-chart-2)" },
@@ -20,14 +19,15 @@ export function MonthlyComparisonChart() {
   const transactions = useFinanceStore((s) => s.transactions)
   const isHydrated = useFinanceStore((s) => s.isHydrated)
 
-  const chartData = useMemo(() => {
-    return MONTHS.map((month, idx) => {
-      const monthStr = `2026-${String(idx + 1).padStart(2, "0")}`
-      const monthTxs = transactions.filter((t) => t.date.startsWith(monthStr))
-      const income = monthTxs.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0)
-      const expenses = monthTxs.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0)
-      return { month, income, expenses }
-    })
+  const { chartData, monthCount } = useMemo(() => {
+    const months = getActiveMonths(transactions, 6)
+    const breakdown = computeMonthlyBreakdown(transactions, months)
+    const data = breakdown.map((b) => ({
+      month: b.label,
+      income: b.income,
+      expenses: b.expenses,
+    }))
+    return { chartData: data, monthCount: months.length }
   }, [transactions])
 
   if (!isHydrated) {
@@ -44,7 +44,7 @@ export function MonthlyComparisonChart() {
       <Card>
         <CardHeader>
           <CardTitle>Monthly Income vs Expenses</CardTitle>
-          <CardDescription>Grouped comparison over 6 months</CardDescription>
+          <CardDescription>Grouped comparison over {monthCount} months</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[300px] w-full">

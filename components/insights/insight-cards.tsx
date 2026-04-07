@@ -1,15 +1,15 @@
 "use client"
 
 import { useMemo } from "react"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import { TrendingDownIcon, TrendingUpIcon, CalendarIcon } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useFinanceStore } from "@/lib/store"
 import { useAnimatedNumber } from "@/hooks/use-animated-number"
-import { CATEGORIES, formatCurrency } from "@/lib/constants"
+import { CATEGORY_MAP, formatCurrency } from "@/lib/constants"
+import { computeMoMChange, computeCategoryBreakdown, computeDaySpan, getActiveMonths, monthKeyToLabel } from "@/lib/aggregates"
 import { staggerContainer, fadeInUp, cardHover } from "@/lib/motion"
-import { useReducedMotion } from "framer-motion"
 
 function AnimatedCurrency({ value }: { value: number }) {
   const display = useAnimatedNumber({
@@ -29,36 +29,30 @@ export function InsightCards() {
     const totalExpenses = expenses.reduce((s, t) => s + t.amount, 0)
 
     // Highest spending category
-    const catMap = new Map<string, number>()
-    for (const tx of expenses) {
-      catMap.set(tx.category, (catMap.get(tx.category) ?? 0) + tx.amount)
-    }
-    let highestCat = { id: "", amount: 0 }
-    for (const [id, amount] of catMap) {
-      if (amount > highestCat.amount) highestCat = { id, amount }
-    }
-    const highestCatDef = CATEGORIES.find((c) => c.id === highestCat.id)
-    const highestCatPercent = totalExpenses > 0 ? (highestCat.amount / totalExpenses) * 100 : 0
+    const categories = computeCategoryBreakdown(transactions)
+    const highest = categories[0] ?? { id: "", label: "N/A", amount: 0 }
+    const highestCatPercent = totalExpenses > 0 ? (highest.amount / totalExpenses) * 100 : 0
 
-    // Month-over-month (May vs June)
-    const mayExpenses = expenses
-      .filter((t) => t.date.startsWith("2026-05"))
-      .reduce((s, t) => s + t.amount, 0)
-    const junExpenses = expenses
-      .filter((t) => t.date.startsWith("2026-06"))
-      .reduce((s, t) => s + t.amount, 0)
-    const momChange = mayExpenses > 0 ? ((junExpenses - mayExpenses) / mayExpenses) * 100 : 0
+    // Real month-over-month change (last two months with data)
+    const mom = computeMoMChange(transactions)
 
-    // Average daily expenditure (6 months ≈ 182 days)
-    const avgDaily = totalExpenses / 182
+    // Latest month label
+    const activeMonths = getActiveMonths(transactions, 2)
+    const latestMonthLabel = activeMonths.length > 0 ? monthKeyToLabel(activeMonths[activeMonths.length - 1]) : "—"
+
+    // Average daily expenditure from actual date span
+    const daySpan = computeDaySpan(transactions)
+    const avgDaily = totalExpenses / daySpan
 
     return {
-      highestCatLabel: highestCatDef?.label ?? highestCat.id,
-      highestCatAmount: highestCat.amount,
+      highestCatLabel: highest.label,
+      highestCatAmount: highest.amount,
       highestCatPercent,
-      momChange,
-      junExpenses,
+      momChange: mom.change,
+      latestMonthExpenses: mom.currentExpenses,
+      latestMonthLabel,
       avgDaily,
+      daySpan,
     }
   }, [transactions])
 
@@ -122,7 +116,7 @@ export function InsightCards() {
               {insights.momChange >= 0 ? "+" : ""}{insights.momChange.toFixed(1)}%
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              June expenses: <AnimatedCurrency value={insights.junExpenses} />
+              {insights.latestMonthLabel} expenses: <AnimatedCurrency value={insights.latestMonthExpenses} />
             </p>
           </CardContent>
         </Card>
@@ -141,7 +135,7 @@ export function InsightCards() {
               <AnimatedCurrency value={insights.avgDaily} />
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              Across 6 months of tracked spending
+              Across {insights.daySpan} days of tracked spending
             </p>
           </CardContent>
         </Card>

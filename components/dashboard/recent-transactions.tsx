@@ -68,12 +68,13 @@ export function RecentTransactions() {
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
-              <motion.tbody variants={staggerContainer} initial="hidden" animate="visible">
+              <motion.tbody role="rowgroup" variants={staggerContainer} initial="hidden" animate="visible">
                 {recent.map((tx) => {
                   const cat = getCategoryById(tx.category)
                   return (
                     <motion.tr
                       key={tx.id}
+                      role="row"
                       variants={fadeInUp}
                       className="border-b transition-colors hover:bg-muted/50"
                     >
