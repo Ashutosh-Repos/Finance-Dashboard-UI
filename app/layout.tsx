@@ -4,8 +4,7 @@ import "./globals.css"
 
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/layout/app-sidebar"
+import { NavigationDock } from "@/components/navigation-dock"
 import { Header } from "@/components/layout/header"
 import { Toaster } from "@/components/ui/sonner"
 
@@ -131,19 +130,24 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider>
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
+            {/* ─── App Shell: Dock + Content ─────────────────────────── */}
+            <div className="flex h-screen flex-col sm:flex-row">
+              {/* Left dock (desktop) / bottom bar (mobile) */}
+              <NavigationDock />
+
+              {/* Main content area */}
+              <div className="flex flex-1 flex-col overflow-hidden sm:ml-16 mb-14 sm:mb-0">
                 <Header />
                 <main className="flex-1 overflow-auto p-4 md:p-6">
                   {children}
                 </main>
-              </SidebarInset>
-            </SidebarProvider>
+              </div>
+            </div>
           </TooltipProvider>
-          <Toaster richColors position="bottom-right" />
+          <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>
     </html>
   )
 }
+
