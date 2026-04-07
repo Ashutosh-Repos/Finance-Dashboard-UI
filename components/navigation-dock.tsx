@@ -9,7 +9,6 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-//import { IconArrowLeft } from "@tabler/icons-react";
 import { ArrowLeft } from "lucide-react";
 
 export interface NavItem {
@@ -93,7 +92,7 @@ export const BackButton = ({
 
   return (
     <div className={cn("relative group", className)}>
-      <IconArrowLeft
+      <ArrowLeft
         onClick={handleBack}
         className={cn(
           iconClassName,
