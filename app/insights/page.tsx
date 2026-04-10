@@ -26,7 +26,6 @@ export default function InsightsPage() {
   return (
     <PageTransition>
       <AnimatedSection>
-        <h1 className="text-2xl font-bold tracking-tight">Insights</h1>
         <p className="text-sm text-muted-foreground">
           Analyze your spending patterns and financial health.
         </p>
@@ -36,7 +35,7 @@ export default function InsightsPage() {
       <LazyInsightCards />
       <LazyMonthlyComparisonChart />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 w-full min-w-0">
         <LazyTopCategoriesChart />
         <LazySavingsGoal />
       </div>

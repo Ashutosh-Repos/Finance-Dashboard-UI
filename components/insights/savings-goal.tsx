@@ -61,7 +61,7 @@ export function SavingsGoal() {
   }
 
   return (
-    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true }} className="w-full min-w-0">
       <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Savings Goal</CardTitle>

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { motion } from "framer-motion"
-import { Cell, Label, Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart"
 import { useFinanceStore } from "@/lib/store"
@@ -51,29 +51,26 @@ export function SpendingBreakdownChart() {
   }
 
   return (
-    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} className="w-full min-w-0">
       <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Spending Breakdown</CardTitle>
           <CardDescription>Top 5 expense categories</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px]">
+          <ChartContainer config={chartConfig} className="mx-auto aspect-square w-full max-h-[300px] min-w-0 overflow-hidden">
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent />} />
               <Pie
                 data={chartData}
                 dataKey="value"
                 nameKey="name"
-                innerRadius={70}
-                outerRadius={120}
+                innerRadius="60%"
+                outerRadius="90%"
                 strokeWidth={2}
                 paddingAngle={2}
                 {...pieAnimationProps}
               >
-                {chartData.map((entry) => (
-                  <Cell key={entry.name} fill={entry.fill} />
-                ))}
                 <Label
                   content={({ viewBox }) => {
                     if (viewBox && "cx" in viewBox && "cy" in viewBox) {

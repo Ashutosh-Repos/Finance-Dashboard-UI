@@ -29,7 +29,6 @@ export default function DashboardPage() {
     <PageTransition>
       {/* Server-rendered heading — instant HTML, no JS needed */}
       <AnimatedSection>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-sm text-muted-foreground">
           Overview of your finances at a glance.
         </p>
@@ -39,7 +38,7 @@ export default function DashboardPage() {
       <LazySummaryCards />
       <LazyBalanceTrendChart />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 w-full min-w-0">
         <LazySpendingBreakdownChart />
         <LazyRecentTransactions />
       </div>

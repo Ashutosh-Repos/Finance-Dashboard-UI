@@ -22,7 +22,6 @@ export default function TransactionsPage() {
     <PageTransition>
       {/* Server-rendered heading — zero JS, instant HTML */}
       <AnimatedSection>
-        <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
         <p className="text-sm text-muted-foreground">
           Manage and explore your financial transactions.
         </p>

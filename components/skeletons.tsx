@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 /** 4 summary stat card skeletons */
 export function CardsSkeleton() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
         <Card key={i} className="relative overflow-hidden">
           <div className="animate-shimmer absolute inset-0" />
@@ -50,7 +50,7 @@ export function GridSkeleton() {
 /** 3 insight stat card skeletons */
 export function InsightCardsSkeleton() {
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {Array.from({ length: 3 }).map((_, i) => (
         <Card key={i} className="relative overflow-hidden">
           <div className="animate-shimmer absolute inset-0" />

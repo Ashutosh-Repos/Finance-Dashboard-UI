@@ -11,7 +11,7 @@ import { pageEnter, fadeInUp } from "@/lib/motion"
 export function PageTransition({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
-      className="flex flex-col gap-6"
+      className="flex flex-col gap-6 w-full min-w-0"
       variants={pageEnter}
       initial="hidden"
       animate="visible"

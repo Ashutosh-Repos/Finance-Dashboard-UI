@@ -96,7 +96,7 @@ export function SummaryCards() {
 
   if (!isHydrated) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i} className="overflow-hidden">
             <div className="animate-shimmer absolute inset-0" />
@@ -115,7 +115,7 @@ export function SummaryCards() {
 
   return (
     <motion.div
-      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
       variants={staggerContainer}
       initial="hidden"
       animate="visible"

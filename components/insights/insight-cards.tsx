@@ -54,7 +54,7 @@ export function InsightCards() {
 
   if (!isHydrated) {
     return (
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <Card key={i} className="overflow-hidden">
             <div className="animate-shimmer absolute inset-0" />
@@ -73,7 +73,7 @@ export function InsightCards() {
 
   return (
     <motion.div
-      className="grid gap-4 sm:grid-cols-3"
+      className="grid grid-cols-1 gap-4 sm:grid-cols-3"
       variants={staggerContainer}
       initial="hidden"
       animate="visible"

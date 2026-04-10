@@ -40,14 +40,14 @@ export function MonthlyComparisonChart() {
   }
 
   return (
-    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} className="w-full min-w-0">
       <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Monthly Income vs Expenses</CardTitle>
           <CardDescription>Grouped comparison over {monthCount} months</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+          <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full min-w-0 overflow-hidden">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid vertical={false} strokeDasharray="3 3" strokeOpacity={0.3} />
               <XAxis dataKey="month" tickLine={false} axisLine={false} />

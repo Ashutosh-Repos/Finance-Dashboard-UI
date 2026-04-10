@@ -49,14 +49,14 @@ export function BalanceTrendChart() {
   }
 
   return (
-    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} className="w-full min-w-0">
       <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Balance Trend</CardTitle>
           <CardDescription>{dateLabel}</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+          <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full min-w-0 overflow-hidden">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">

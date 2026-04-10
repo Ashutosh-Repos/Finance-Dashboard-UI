@@ -39,14 +39,14 @@ export function TopCategoriesChart() {
   }
 
   return (
-    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }}>
+    <motion.div variants={fadeInScale} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} className="w-full min-w-0">
       <Card className="card-hover-effect overflow-hidden">
         <CardHeader>
           <CardTitle>Top Spending Categories</CardTitle>
           <CardDescription>Expenses by category, sorted by total</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+          <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full min-w-0 overflow-hidden">
             <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid horizontal={false} strokeDasharray="3 3" strokeOpacity={0.3} />
               <XAxis type="number" tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
